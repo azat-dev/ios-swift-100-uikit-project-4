@@ -34,6 +34,22 @@ class ViewController: UIViewController, WKNavigationDelegate {
         webView.allowsBackForwardNavigationGestures = true
     }
     
+    func initToolbar() {
+        let spacer = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil)
+        
+        let refreshButton = UIBarButtonItem(
+            barButtonSystemItem: .refresh,
+            target: webView,
+            action: #selector(webView.reload)
+        )
+        
+        toolbarItems = [spacer, refreshButton]
+        navigationController?.isToolbarHidden = false
+    }
+    
     func initNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "Open",
@@ -48,6 +64,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         
         initWebView()
         initNavigationBar()
+        initToolbar()
     }
     
     @objc func openButtonTapped() {
