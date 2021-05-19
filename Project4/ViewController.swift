@@ -15,6 +15,7 @@ struct PageInfo {
 
 class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
+    var progressView: UIProgressView!
     
     let pages: [PageInfo] = [
         .init(title: "google.com", link: "https://google.com"),
@@ -34,7 +35,25 @@ class ViewController: UIViewController, WKNavigationDelegate {
         webView.allowsBackForwardNavigationGestures = true
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "estimatedProgress" {
+            progressView.progress = Float(webView.estimatedProgress)
+        }
+    }
+    
     func initToolbar() {
+        progressView = UIProgressView(progressViewStyle: .default)
+        progressView.sizeToFit()
+        
+        let progressButton = UIBarButtonItem(customView: progressView)
+        
+        webView.addObserver(
+            self,
+            forKeyPath: #keyPath(WKWebView.estimatedProgress),
+            options: .new,
+            context: nil
+        )
+        
         let spacer = UIBarButtonItem(
             barButtonSystemItem: .flexibleSpace,
             target: nil,
@@ -46,7 +65,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
             action: #selector(webView.reload)
         )
         
-        toolbarItems = [spacer, refreshButton]
+        toolbarItems = [progressButton, spacer, refreshButton]
         navigationController?.isToolbarHidden = false
     }
     
