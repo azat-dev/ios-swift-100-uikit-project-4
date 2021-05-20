@@ -156,6 +156,7 @@ class WebPageViewController: UIViewController, WKNavigationDelegate {
             return
         }
         
+        self.page = page
         webView.load(URLRequest(url: url))
     }
     
@@ -178,20 +179,19 @@ class WebPageViewController: UIViewController, WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
         guard let host = navigationAction.request.url?.host else {
-            showBlockedNavigationAlert()
             decisionHandler(.allow)
             return
         }
         
         let isPageExist = pages.contains(where: { page in
-            host.contains( URL(string: page.link)!.host!)
+            host.isMatch(pattern: page.allowed)
         })
         
         if isPageExist {
             decisionHandler(.allow)
             return
         }
-        
+
         showBlockedNavigationAlert()
         decisionHandler(.cancel)
     }

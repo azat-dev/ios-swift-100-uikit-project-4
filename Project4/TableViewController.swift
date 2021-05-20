@@ -7,15 +7,29 @@
 
 import UIKit
 
+
 struct PageInfo {
     let title: String
     let link: String
+    let allowed: String
 }
 
 let pages: [PageInfo] = [
-    .init(title: "google.com", link: "https://google.com"),
-    .init(title: "apple.com", link: "https://apple.com"),
-    .init(title: "hackingwithswift.com", link: "https://hackingwithswift.com"),
+    .init(
+        title: "google.com",
+        link: "https://google.com",
+        allowed: "google\\."
+    ),
+    .init(
+        title: "apple.com",
+        link: "https://apple.com",
+        allowed: "apple\\."
+    ),
+    .init(
+        title: "hackingwithswift.com",
+        link: "https://hackingwithswift.com",
+        allowed: "hackingwithswift\\."
+    ),
 ]
 
 class TableViewController: UITableViewController {
