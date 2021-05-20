@@ -16,6 +16,8 @@ struct PageInfo {
 class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
     var progressView: UIProgressView!
+    var backButton: UIBarButtonItem!
+    var forwardButton: UIBarButtonItem!
     
     let pages: [PageInfo] = [
         .init(title: "google.com", link: "https://google.com"),
@@ -36,8 +38,16 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "estimatedProgress" {
+        
+        switch keyPath {
+        case "estimatedProgress":
             progressView.progress = Float(webView.estimatedProgress)
+        case "canGoBack":
+            backButton.isEnabled = webView.canGoBack
+        case "canGoForward":
+            forwardButton.isEnabled = webView.canGoForward
+        default:
+            return
         }
     }
     
@@ -65,7 +75,38 @@ class ViewController: UIViewController, WKNavigationDelegate {
             action: #selector(webView.reload)
         )
         
-        toolbarItems = [progressButton, spacer, refreshButton]
+        backButton = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.backward"),
+            style: .plain,
+            target: webView,
+            action: #selector(webView.goBack)
+        )
+        
+        backButton.isEnabled = webView.canGoBack
+        webView.addObserver(
+            self,
+            forKeyPath: #keyPath(WKWebView.canGoBack),
+            options: .new,
+            context: nil
+        )
+        
+        forwardButton = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.forward"),
+            style: .plain,
+            target: webView,
+            action: #selector(webView.goForward)
+        )
+        
+        forwardButton.isEnabled = webView.canGoForward
+        webView.addObserver(
+            self,
+            forKeyPath: #keyPath(WKWebView.canGoForward),
+            options: .new,
+            context: nil
+        )
+        
+        
+        toolbarItems = [progressButton, spacer, backButton, forwardButton, refreshButton]
         navigationController?.isToolbarHidden = false
     }
     
