@@ -131,10 +131,23 @@ class ViewController: UIViewController, WKNavigationDelegate {
         title = webView.title
     }
     
+    func showBlockedNavigationAlert() {
+        let alert = UIAlertController(
+            title: "Blocked",
+            message: "The url is blocked",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(.init(title: "Continue", style: .cancel))
+        
+        present(alert, animated: true)
+    }
+    
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
         guard let host = navigationAction.request.url?.host else {
-            decisionHandler(.cancel)
+            showBlockedNavigationAlert()
+            decisionHandler(.allow)
             return
         }
         
@@ -147,6 +160,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
             return
         }
         
+        showBlockedNavigationAlert()
         decisionHandler(.cancel)
     }
 }
