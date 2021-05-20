@@ -130,5 +130,24 @@ class ViewController: UIViewController, WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         title = webView.title
     }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
+        guard let host = navigationAction.request.url?.host else {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        let isPageExist = pages.contains(where: { page in
+            host.contains( URL(string: page.link)!.host!)
+        })
+        
+        if isPageExist {
+            decisionHandler(.allow)
+            return
+        }
+        
+        decisionHandler(.cancel)
+    }
 }
 
