@@ -8,22 +8,12 @@
 import UIKit
 import WebKit
 
-struct PageInfo {
-    let title: String
-    let link: String
-}
-
-class ViewController: UIViewController, WKNavigationDelegate {
+class WebPageViewController: UIViewController, WKNavigationDelegate {
+    var page: PageInfo!
     var webView: WKWebView!
     var progressView: UIProgressView!
     var backButton: UIBarButtonItem!
     var forwardButton: UIBarButtonItem!
-    
-    let pages: [PageInfo] = [
-        .init(title: "google.com", link: "https://google.com"),
-        .init(title: "apple.com", link: "https://apple.com"),
-        .init(title: "hackingwithswift.com", link: "https://hackingwithswift.com"),
-    ]
     
     override func loadView() {
         webView = WKWebView()
@@ -32,7 +22,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
     
     func initWebView() {
-        let url = URL(string: "https://google.com")!
+        let url = URL(string: page.link)!
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
     }
@@ -111,6 +101,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
     
     func initNavigationBar() {
+        navigationItem.largeTitleDisplayMode = .never
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "Open",
             style: .plain,
